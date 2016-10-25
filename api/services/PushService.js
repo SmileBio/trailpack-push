@@ -23,20 +23,26 @@ module.exports = class PushService extends Service {
     }
 
     const apnConnection = new apn.Connection(options)
+    const apnProvider = new apn.Provider(options);
 
-    if (message.aps.badge)
-      message.aps.badge = parseInt(message.aps.badge) || 0
+    if (message.badge)
+      message.badge = parseInt(message.badge) || 0
 
     let note = new apn.Notification()
-    note = _.merge(note, message.aps)
-    note.payload = message
-    note.contentAvailable = note.payload.aps['content-available'] || 0
-    delete note.payload.aps
+    //note = _.merge(note, message.aps)
+    note.payload = message.payload
+    note.badge = message.badge
+    note.sound = message.sound
+    note.alert = message.alert
+    note.contentAvailable = note.payload['content-available'] || 0
 
-    for (const part in token) {
-      const myDevice = new apn.Device(token[part])
-      apnConnection.pushNotification(note, myDevice)
-    }
+
+    apnProvider.send(note, token).then( (result) => {
+      console.log(result)
+    });
+      /*const myDevice = new apn.Device(token)
+      apnConnection.pushNotification(note, myDevice)*/
+
   }
 
   /**
@@ -47,12 +53,13 @@ module.exports = class PushService extends Service {
    * @param retry on failure
    * @param next callback results
    */
-  sendToGCM(ids, senderId, messageInfos, retry, next) {
+  sendToGCM(ids, messageInfos, retry, next) {
+    const options = this.app.config.push.gcm
     if (!Array.isArray(ids)) {
       ids = [ids]
     }
 
-    ids = _.chunk(ids, 1000)
+    //ids = _.chunk(ids, 1000)
 
     let message
     if (messageInfos) {
@@ -63,16 +70,16 @@ module.exports = class PushService extends Service {
     }
 
     // Set up the sender with you API key
-    const sender = new gcm.Sender(senderId)
+    const sender = new gcm.Sender(options.senderId)
 
-    for (const part in ids) {
+
       if (retry) {
-        sender.send(message, ids[part], {}, next)
+        sender.send(message, { registrationTokens: ids }, 5, next)
       }
       else {
-        sender.sendNoRetry(message, ids[part], next)
+        sender.sendNoRetry(message, { registrationTokens: ids }, next)
       }
-    }
+
   }
 }
 
