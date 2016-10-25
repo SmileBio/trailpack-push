@@ -23,8 +23,7 @@ module.exports = class PushService extends Service {
     }
 
     const apnConnection = new apn.Connection(options)
-    const apnProvider = new apn.Provider(options);
-
+    
     if (message.badge)
       message.badge = parseInt(message.badge) || 0
 
@@ -37,9 +36,7 @@ module.exports = class PushService extends Service {
     note.contentAvailable = note.payload['content-available'] || 0
 
 
-    apnProvider.send(note, token).then( (result) => {
-      console.log(result)
-    });
+    apnConnection.pushNotification(note, token)
       /*const myDevice = new apn.Device(token)
       apnConnection.pushNotification(note, myDevice)*/
 
