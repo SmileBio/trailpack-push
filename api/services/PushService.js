@@ -4,6 +4,7 @@ const Service = require('trails-service')
 const gcm = require('node-gcm')
 const apn = require('apn')
 const _ = require('lodash')
+const FCM = require('fcm-node')
 
 /**
  * @module PushService
@@ -23,7 +24,7 @@ module.exports = class PushService extends Service {
     }
 
     const apnConnection = new apn.Connection(options)
-    
+
     if (message.badge)
       message.badge = parseInt(message.badge) || 0
 
@@ -40,6 +41,30 @@ module.exports = class PushService extends Service {
       /*const myDevice = new apn.Device(token)
       apnConnection.pushNotification(note, myDevice)*/
 
+  }
+
+  sendToFCM(ids, messageInfo){
+    const options = this.app.config.push.gcm
+    if (!Array.isArray(ids)) {
+      ids = [ids]
+    }
+    let fcm = new FCM(options.senderId)
+    let message = {
+      to: ids,
+      //collapse_key: '4*8',
+
+      notification: {
+        title: 'Title of your push notification',
+        body: 'Body of your push notification'
+      }
+    }
+    fcm.send(message, function(err, response) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Successfully sent with response: ", response);
+      }
+    })
   }
 
   /**
