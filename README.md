@@ -31,6 +31,9 @@ You need a `/config/push.js` file under your Trails project to configure your ap
     	gcm : {
     		senderId : null //Server API key
     	},
+    	fcm: {
+    	  senderId : null //Server API key
+    	},
     	apn : {
     		cert : null, //Path to cert file
     		key  : null, //Path to key file
@@ -73,6 +76,15 @@ After install a new service is available. You can send GCM message/notification 
         console.log(err, results);
       });
 More informations about parameters here : https://github.com/ToothlessGear/node-gcm#usage
+ 
+For FCM :
+      this.app.services.pushService.sendToGCM([DEVICE_TOKENS], {
+              notification: {
+                title: "Hello, World",
+                icon: "ic_launcher",
+                body: "This is a notification that will be displayed ASAP."
+              }
+      )
       
 For an APN notification : 
 

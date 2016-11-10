@@ -44,27 +44,30 @@ module.exports = class PushService extends Service {
   }
 
   sendToFCM(ids, messageInfo){
-    const options = this.app.config.push.gcm
+    const options = this.app.config.push.fcm
     if (!Array.isArray(ids)) {
       ids = [ids]
     }
     let fcm = new FCM(options.senderId)
-    let message = {
-      to: ids,
-      //collapse_key: '4*8',
+    ids.forEach(token=>{
+      let message = {
+        to: token,
+        //collapse_key: '4*8',
 
-      notification: {
-        title: 'Title of your push notification',
-        body: 'Body of your push notification'
+        notification: {
+          title: messageInfo.notification.title,
+          body: messageInfo.notification.body
+        }
       }
-    }
-    fcm.send(message, function(err, response) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Successfully sent with response: ", response);
-      }
+      fcm.send(message, function(err, response) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Successfully sent with response: ", response);
+        }
+      })
     })
+
   }
 
   /**

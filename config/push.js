@@ -10,6 +10,9 @@ module.exports = {
   gcm: {
     senderId: null
   },
+  fcm: {
+    senderId: null
+  },
   apn: {
     cert: null,
     key: null
