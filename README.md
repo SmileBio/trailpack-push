@@ -78,6 +78,7 @@ After install a new service is available. You can send GCM message/notification 
 More informations about parameters here : https://github.com/ToothlessGear/node-gcm#usage
  
 For FCM :
+
       this.app.services.pushService.sendToGCM([DEVICE_TOKENS], {
               notification: {
                 title: "Hello, World",

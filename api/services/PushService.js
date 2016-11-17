@@ -31,10 +31,10 @@ module.exports = class PushService extends Service {
     let note = new apn.Notification()
     //note = _.merge(note, message.aps)
     note.payload = message.payload
-    note.badge = message.badge
+    //note.badge = message.badge
     note.sound = message.sound
     note.alert = message.alert
-    note.contentAvailable = note.payload['content-available'] || 0
+    //note.contentAvailable = note.payload['content-available'] || 0
 
 
     apnConnection.pushNotification(note, token)
